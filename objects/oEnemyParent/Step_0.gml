@@ -10,7 +10,7 @@ switch (current_state) {
             }
         }
     
-        if (collision_circle(x, y, 64, oPlayer, false, false)) {
+        if (collision_circle(x, y, 128, oPlayer, false, false)) {
             current_state = ENEMY_STATE.chase
         }
     
@@ -19,8 +19,7 @@ switch (current_state) {
         break
     case ENEMY_STATE.wander:
         state_counter++
-        x += move_x
-        y += move_y
+        scr_move_enemy_with_collision(move_x, move_y, tilemap)
         if (state_counter >= game_speed*2) {
             var change = choose(0, 1)
             switch (change) {
@@ -32,7 +31,7 @@ switch (current_state) {
                     break;
             }
         }
-    if collision_circle(x, y, 64, oPlayer, false, false) {
+    if collision_circle(x, y, 128, oPlayer, false, false) {
         current_state = ENEMY_STATE.chase
     }
         
@@ -41,9 +40,8 @@ switch (current_state) {
         enemy_direction = point_direction(x, y, oPlayer.x, oPlayer.y)
         move_x = lengthdir_x(move_speed, enemy_direction)
         move_y = lengthdir_y(move_speed, enemy_direction)
-        x += move_x
-        y += move_y
-        if (!collision_circle(x, y, 64, oPlayer, false, false)) {
+        scr_move_enemy_with_collision(move_x, move_y, tilemap)
+        if (!collision_circle(x, y, 128, oPlayer, false, false)) {
             current_state = ENEMY_STATE.idle
         }
         if (collision_circle(x, y, 8, oPlayer, false, false) && attack_timer >= attack_cd) {
@@ -65,3 +63,58 @@ switch (current_state) {
 }
 
 if (attack_timer <= attack_cd) attack_timer++
+    
+if (hit_registered && !hit_applied) {
+    alarm[0] = 30
+    apply_hit_effect(15, c_red, 1)
+    if (hp <= 0) {
+        instance_destroy()
+    }
+    hit_applied = true
+}
+    
+if (stun_timer > 0) {
+    stun_timer--
+
+    // Optional: disable movement or AI
+    hspeed = 0;
+    vspeed = 0;
+    //current_state = ENEMY_STATE.idle
+} else {
+    // Normal behavior resumes
+    // e.g., movement, chasing, attacking
+}
+    
+// Apply knockback force (if any)
+if (knockback_force > 0) {
+    hspeed += lengthdir_x(knockback_force, knockback_dir);
+    vspeed += lengthdir_y(knockback_force, knockback_dir);
+    knockback_force -= knockback_decay;
+    if (knockback_force < 0) knockback_force = 0;
+}
+
+// Apply friction
+hspeed *= 0.4;
+vspeed *= 0.4;
+
+// Clamp velocity
+var max_speed = 4;
+hspeed = clamp(hspeed, -max_speed, max_speed);
+vspeed = clamp(vspeed, -max_speed, max_speed);
+
+// Apply movement with collision
+if (!tilemap_solid_at(x + hspeed, y)) {
+// Apply movement with collision
+if (!scr_tilemap_solid_at(x + hspeed, y, tilemap)) {
+    x += hspeed;
+} else {
+    hspeed = 0;
+}
+
+if (!scr_tilemap_solid_at(x, y + vspeed, tilemap)) {
+    y += vspeed;
+} else {
+    vspeed = 0;
+
+    }
+}    

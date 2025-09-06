@@ -1,6 +1,14 @@
 hp = 3
 damage = 1
 
+hit_registered = false
+hit_applied = false
+stun_timer = 0
+
+knockback_dir = 0;
+knockback_force = 0;
+knockback_decay = 0.5;
+
 target_x = x
 target_y = y
 
@@ -26,3 +34,9 @@ move_speed = 0.75
 enemy_direction = random_range(0, 359)
 move_x = lengthdir_x(move_speed, enemy_direction)
 move_y = lengthdir_y(move_speed, enemy_direction)
+
+function apply_hit_effect(duration, flash_color, alarm_index) {
+    alarm[alarm_index] = duration;
+    image_blend = flash_color;
+}
+
