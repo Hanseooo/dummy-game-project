@@ -60,9 +60,14 @@ switch (current_state) {
         my_attack = noone
         current_state = ENEMY_STATE.chase
         break
+    case ENEMY_STATE.dead:
+        
+        break
 }
 
 if (attack_timer <= attack_cd) attack_timer++
+    
+if (hit_flash_timer >= 0) hit_flash_timer--
     
 if (hit_registered && !hit_applied) {
     alarm[0] = 30

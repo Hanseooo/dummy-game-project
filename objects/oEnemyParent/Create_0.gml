@@ -17,6 +17,7 @@ game_speed = 60
 my_attack = noone
 attack_cd = 45
 attack_timer = 0
+attack_knockback = 2
 
 tilemap = layer_tilemap_get_id("Tiles_Wall")
 
@@ -25,6 +26,8 @@ enum ENEMY_STATE {
     wander = 1,
     chase = 2,
     attack = 3,
+    melee = 4,
+    dead = 5,
 }
 
 state_counter = 0

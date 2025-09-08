@@ -4,7 +4,7 @@ damage = 2
 hit_registered = false
 hit_applied = false
 hit_flash_timer = 0
-hit_flash_duration = 4
+hit_flash_duration = 10
 
 stun_timer = 0
 
@@ -12,10 +12,15 @@ knockback_dir = 0;
 knockback_force = 0;
 knockback_decay = 0.5;
 
+
+
 target_x = x
 target_y = y
 
 game_speed = 60
+
+fade_duration = game_speed * 2;
+fade_timer = -1;  
 
 
 
@@ -34,6 +39,7 @@ move_y = lengthdir_y(move_speed, enemy_direction)
 my_attack =  noone
 attack_cd = 60
 attack_timer = 0
+attack_knockback = 2
 
 image_xscale = 0.75
 image_yscale = 0.75
@@ -59,6 +65,8 @@ function set_directional_sprite() {
 
 function apply_hit_effect(duration, alarm_index) {
     alarm[alarm_index] = duration;
+    audio_sound_pitch(snd_sword_strikes_object,random_range(0.8, 1.2))
+    audio_play_sound(snd_sword_strikes_object, 0, false)
     //image_blend = flash_color;
 }
 

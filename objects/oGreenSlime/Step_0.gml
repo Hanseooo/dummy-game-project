@@ -66,19 +66,57 @@ switch (current_state) {
         my_attack = noone
         current_state = ENEMY_STATE.chase
         break
+    case ENEMY_STATE.dead:
+        break
+
 }
 
 if (attack_timer <= attack_cd) attack_timer++
     
+if (hp <= 0 && current_state != ENEMY_STATE.dead) {
+    current_state = ENEMY_STATE.dead;
+    knockback_force += 0.2
+    scr_hit_sparks(x, y, 14, knockback_dir)
+    sprite_index = spr_greenslime_dead;
+    image_speed = 0.5; 
+    image_index = 0;  
+    alarm[1] = game_speed * 5;
+}
+
+if (current_state == ENEMY_STATE.dead && image_index >= image_number - 1) {
+    image_speed = 0;
+    image_index = image_number - 1;
+}
+
+if (fade_timer > 0) {
+    fade_timer--;
+    image_alpha = fade_timer / fade_duration; 
+} else if (fade_timer == 0) {
+    image_alpha = 0; 
+}
+
+
+
+if (alarm[1] == game_speed*3) {
+    fade_timer = fade_duration
+}
+
+    
 if (hit_registered && !hit_applied) {
     alarm[0] = 30
     apply_hit_effect(5, 1)
+    scr_hit_sparks(x, y, 12, knockback_dir)
     hit_applied = true
     stun_timer = 15
     if(hit_flash_timer <= hit_flash_duration) hit_flash_timer = hit_flash_duration
     
     if (hp <= 0) {
-        instance_destroy()
+        current_state = ENEMY_STATE.dead
+    }
+    
+    if (current_state == ENEMY_STATE.dead && image_index >= image_number-1) {
+        image_speed = 0
+        image_index = image_number-1
     }
 }
 
@@ -106,7 +144,7 @@ hspeed *= 0.85;
 vspeed *= 0.85;
 
 // Clamp velocity
-var max_speed = 4;
+var max_speed = 2
 hspeed = clamp(hspeed, -max_speed, max_speed);
 vspeed = clamp(vspeed, -max_speed, max_speed);
 

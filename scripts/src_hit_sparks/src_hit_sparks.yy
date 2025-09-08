@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"src_hit_sparks",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"src_hit_sparks",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,6 +1,6 @@
-
-
-if (oPlayer.current_state == PLAYER_STATE.ATTACK) {
-    if (oPlayer.is_moving) oPlayer.current_state = PLAYER_STATE.MOVING
-    else oPlayer.current_state = PLAYER_STATE.IDLE 
-    }   
+//
+//
+//if (owner.current_state == PLAYER_STATE.ATTACK) {
+    //if (owner.is_moving) owner.current_state = PLAYER_STATE.MOVING
+    //else owner.current_state = PLAYER_STATE.IDLE 
+    //}   
