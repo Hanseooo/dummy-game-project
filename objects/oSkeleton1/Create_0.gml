@@ -13,7 +13,6 @@ knockback_force = 0;
 knockback_decay = 0.5;
 
 
-
 target_x = x
 target_y = y
 
@@ -30,7 +29,7 @@ tilemap = layer_tilemap_get_id("Tiles_Wall")
 state_counter = 0
 current_state = ENEMY_STATE.idle
 
-move_speed = 0.7
+move_speed = 0.8
 enemy_direction = random_range(0, 359)
 move_x = lengthdir_x(move_speed, enemy_direction)
 move_y = lengthdir_y(move_speed, enemy_direction)
@@ -57,12 +56,17 @@ dash_phase            = 0;
 dash_speed_initial    = dash_speed; // remember the default
 dash_friction_initial = dash_friction;
 
+sound_played = false
+
+image_xscale = 0.8
+image_yscale = 0.8
+
 
 function set_directional_sprite() {
 
     if (abs(move_x) < 0.1 && abs(move_y) < 0.1) {
         sprite_index = spr_skeleton1_idle;
-        image_xscale = choose(-1, 1);
+        image_xscale = choose(-0.8, 0.8);
         return;
     }
 
@@ -72,9 +76,9 @@ function set_directional_sprite() {
     sprite_index = spr_skeleton1_walk;
 
     if (dir >= 270 || dir <= 90) {
-        image_xscale = 1;  
+        image_xscale = 0.8;  
     } else {
-        image_xscale = -1; 
+        image_xscale = -0.8; 
     }
 }
 

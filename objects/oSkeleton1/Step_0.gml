@@ -44,10 +44,10 @@ switch (current_state) {
             current_state = ENEMY_STATE.idle;
             break;
         }
-        if (point_distance(x, y, oPlayer.x, oPlayer.y) <= 12) {
+        if (point_distance(x, y, oPlayer.x, oPlayer.y) <= 16) {
             current_state  = ENEMY_STATE.melee;
             sprite_index   = spr_skeleton1_attack;
-            image_xscale   = (ang > 90 && ang < 270) ? -1 : 1;
+            image_xscale   = (ang > 90 && ang < 270) ? -0.8 : 0.8;
             image_index    = 9;
             image_speed    = 1;
             break;
@@ -60,7 +60,7 @@ switch (current_state) {
             dash_phase     = 0;
             dash_traveled  = 0;
             sprite_index   = spr_skeleton1_attack;
-            image_xscale   = (ang > 90 && ang < 270) ? -1 : 1;
+            image_xscale   = (ang > 90 && ang < 270) ? -0.8 : 0.8;
             image_index    = 0;
             image_speed    = 1;
         }
@@ -79,23 +79,36 @@ switch (current_state) {
             break;
         }
         // phase 1 → 2
-        if (dash_phase == 1) {
-            if (floor(image_index) < 8) {
-                break;
-            }
-            dash_phase    = 2;
-            var a         = point_direction(x, y, oPlayer.x, oPlayer.y);
-            dash_dir_x    = lengthdir_x(1, a);
-            dash_dir_y    = lengthdir_y(1, a);
-            // dynamic friction
-            var dist      = point_distance(x, y, oPlayer.x, oPlayer.y);
-            dash_friction = lerp(0.8, dash_friction_initial, clamp(dist/24,0,1));
+    if (dash_phase == 1) {
+        if (floor(image_index) < 7) {
             break;
         }
+
+        dash_phase    = 2;
+        var a         = point_direction(x, y, oPlayer.x, oPlayer.y);
+        dash_dir_x    = lengthdir_x(1, a);
+        dash_dir_y    = lengthdir_y(1, a);
+
+        // 1) dynamic friction (as before)
+        var dist      = point_distance(x, y, oPlayer.x, oPlayer.y);
+        dash_friction = lerp(0.8, dash_friction_initial, clamp(dist/18,0,1));
+
+        // 2) dynamic animation speed based on distance
+        var maxDist        = 96;       
+        var minAnimSpeed   = 1;        // slowest playback
+        var maxAnimSpeed   = 3;       // fastest playback
+        // normalize: 1 at dist=0, 0 at dist>=maxDist
+        var norm           = clamp((maxDist - dist) / maxDist, 0, 1);
+        image_speed        = lerp(minAnimSpeed, maxAnimSpeed, norm);
+        sound_played = false
+
+        break;
+    }
+
         // phase 2: dash
         if (dash_phase == 2) {
             var facing = point_direction(x, y, oPlayer.x, oPlayer.y);
-            image_xscale = (facing > 90 && facing < 270) ? -1 : 1;
+            image_xscale = (facing > 90 && facing < 270) ? -0.8 : 0.8;
             var vx = dash_dir_x*dash_speed, vy = dash_dir_y*dash_speed;
             var steps = max(1,ceil(max(abs(vx),abs(vy))));
             var sx = vx/steps, sy = vy/steps;
@@ -111,6 +124,13 @@ switch (current_state) {
                 dash_speed = dash_speed_initial;
                 current_state = ENEMY_STATE.chase;
             }
+            if (!sound_played) {
+                audio_sound_pitch(snd_sword_swoosh, 0.25)
+                audio_sound_gain(snd_woosh, 0.15, 250)
+                audio_play_sound(snd_woosh, 0, false)
+                sound_played = true
+            }
+            
         }
         break;
 
@@ -128,7 +148,7 @@ if (hp <= 0 && current_state != ENEMY_STATE.dead) {
     image_index = choose(-1, 1)
     image_speed = 0.5; 
     image_index = 0;  
-    alarm[1] = game_speed * 5;
+    alarm[1] = game_speed * 8;
 }
 
 if (current_state == ENEMY_STATE.dead && image_index >= image_number - 1) {

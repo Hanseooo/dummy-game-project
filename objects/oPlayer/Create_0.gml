@@ -1,4 +1,5 @@
 move_speed = 1
+is_slowed = false
 
 game_speed = 60
 
@@ -40,6 +41,10 @@ roll_dir_x = 0;
 roll_dir_y = 0;
 roll_sprite = noone;
 
+with(oCamera) {
+    target = other
+}
+
 
 tilemap = layer_tilemap_get_id("Tiles_Wall")
 
@@ -63,9 +68,15 @@ function player_take_damage(source) {
     audio_sound_pitch(snd_hit_effect, random_range(0.8, 1.2))
     audio_play_sound(snd_hit_effect, 0, false)
     scr_hit_sparks(x, y, 12, knockback_dir)
+    with(oCamera) {
+        shake_time = 12
+        shake_strength = 5
+        zoom_target = 1.15
+    }
     alarm[1] = 10
     if hp <= 0 {
         room_restart()
+        //alarm[2] = 60
     }
     set_invincibility_duration(game_speed*2)
     start_pulse(game_speed*2)
@@ -87,6 +98,12 @@ function set_invincibility_duration(duration) {
 function start_pulse(duration) {
     pulse_timer = duration;
     pulse_alpha_state = 1;
+}
+
+function apply_slow_effect(duration, slow_ratio) {
+    alarm[3] = game_speed * duration
+    move_speed = move_speed * slow_ratio
+    is_slowed = true
 }
 
 
