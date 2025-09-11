@@ -19,6 +19,7 @@ switch (current_state) {
     case ENEMY_STATE.wander:
         state_counter++;
         scr_move_enemy_with_collision(move_x, move_y, tilemap);
+        scr_enemy_set_directional_sprite(move_x, move_y, spr_dark_mage, spr_dark_mage, 0.8)
         if (state_counter >= game_speed*2) {
             state_counter = 0;
             if (choose(0,1) == 0) {
@@ -32,7 +33,7 @@ switch (current_state) {
         if (collision_circle(x, y, 128, oPlayer, false, false)) {
             current_state = ENEMY_STATE.chase;
         }
-    
+        sprite_index = spr_dark_mage;
         scr_enemy_set_directional_sprite(move_x, move_y, spr_dark_mage, spr_dark_mage, 0.8)
 
         break;
@@ -58,6 +59,7 @@ switch (current_state) {
             move_x = lengthdir_x(move_speed, flee_ang);
             move_y = lengthdir_y(move_speed, flee_ang);
             scr_move_enemy_with_collision(move_x, move_y, tilemap);
+            sprite_index = spr_dark_mage;
             break;
         }
     
@@ -65,6 +67,7 @@ switch (current_state) {
         move_x = lengthdir_x(move_speed, ang);
         move_y = lengthdir_y(move_speed, ang);
         scr_move_enemy_with_collision(move_x, move_y, tilemap)
+        sprite_index = spr_dark_mage;
         image_xscale = (ang > 90 && ang < 270) ? -0.8 : 0.8;
         break;
 
@@ -75,39 +78,45 @@ switch (current_state) {
         var px = x + lengthdir_x(16, a);
         var py = y + lengthdir_y(16, a);
     
-        if (floor(image_index) >= 7) { // adjust to your anim length
-            var rand = choose(0, 1)
-            if (rand == 0) { 
-
-            var side_offset = 8 * sign(image_xscale);
-            var up_offset   = -6;
-            px += side_offset;
-            py += up_offset;
-    
-            var ball = instance_create_depth(px, py, depth, oShadowBall);
-            ball.direction     = a;
-            ball.speed         = 1.5;
-            ball.range         = 256;
-            ball.distance_trav = 0;
-            ball.tilemap       = tilemap;
-            ball.damage        = damage
-            ball.owner = id
-                attack_cd = game_speed * random_range(4, 7)
-            }
+            if (floor(image_index) >= 7) { // adjust to your anim length
+                var rand = choose(0, 1)
+                
+                if (rand == 0) { 
+                    var side_offset = 8 * sign(image_xscale);
+                    var up_offset   = -6;
+                    px += side_offset;
+                    py += up_offset;
             
-            else {
-                var rand2 = random_range(0, 6)
-                var entity = noone
-                if (rand2 <= 2) entity = oGreenSlime
-                else if (rand2 == 5) entity = oDarkMage
-                else entity = oSkeleton1
-                    
-                var mob = instance_create_depth(px, py, depth, entity)  
-                mob.hp /= 2
-                mob.image_blend = make_color_rgb(147, 112, 219)
-                mob.damage = mob.damage >= 2 ? mob.damage / 2 : 1
-                audio_play_sound(snd_stand_summon, 0, false)
-                attack_cd = game_speed * choose(6, 8)
+                    var ball = instance_create_depth(px, py, depth, oShadowBall);
+                    ball.direction     = a;
+                    ball.speed         = 1.5;
+                    ball.range         = 256;
+                    ball.distance_trav = 0;
+                    ball.tilemap       = tilemap;
+                    ball.damage        = damage
+                    ball.owner = id
+                    attack_cd = game_speed * random_range(4, 7) 
+                  }
+            
+                else {
+                    var rand2 = floor(random_range(0, 6))
+                    var entity = noone
+                    if (rand2 <= 2) entity = oGreenSlime
+                    else if (rand2 == 5) entity = oDarkMage
+                    else entity = oSkeleton1
+                        
+                    var mob = instance_create_depth(px, py, depth, entity)  
+                    mob.hp /= 2
+                    mob.image_blend = make_color_rgb(147, 112, 219)
+                    mob.damage = mob.damage >= 2 ? mob.damage / 2 : 1
+                    mob.image_alpha = 0.85
+                    audio_play_sound(snd_stand_summon, 0, false)
+                    attack_cd = game_speed * choose(6, 8)
+                }
+                
+            if (image_index >= image_number-1) {
+                image_speed = 0
+                image_index = image_number-1
             }
 
     
@@ -121,7 +130,10 @@ switch (current_state) {
     
 if (hp <= 0 && current_state != ENEMY_STATE.dead) {
     current_state = ENEMY_STATE.dead;
-    knockback_force += 0.2
+    knockback_force += 0.25
+    
+    scr_enemy_item_drop(move_x, move_y, OHealthPotion, 0, 5)
+
     scr_hit_sparks(x, y, 14, knockback_dir)
     sprite_index = spr_dark_mage_death;
     //image_index = choose(-1, 1)

@@ -143,6 +143,9 @@ if (attack_timer <= attack_cd) attack_timer++
 if (hp <= 0 && current_state != ENEMY_STATE.dead) {
     current_state = ENEMY_STATE.dead;
     knockback_force += 0.2
+    
+    scr_enemy_item_drop(move_x, move_y, OHealthPotion, 0, 10)
+    
     scr_hit_sparks(x, y, 14, knockback_dir)
     sprite_index = spr_skeleton1_death;
     image_index = choose(-1, 1)

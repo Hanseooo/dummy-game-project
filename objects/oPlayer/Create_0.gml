@@ -41,6 +41,12 @@ roll_dir_x = 0;
 roll_dir_y = 0;
 roll_sprite = noone;
 
+
+
+
+health_potion = 0
+max_health_potion_amount = 3
+
 with(oCamera) {
     target = other
 }
@@ -51,6 +57,10 @@ tilemap = layer_tilemap_get_id("Tiles_Wall")
 enum PLAYER_STATE  {
     IDLE = 0, MOVING = 1 , ATTACK = 2, ROLLING = 3,
 }
+enum PLAYER_ITEM {
+    health_potion,
+}
+current_item = PLAYER_ITEM.health_potion
 
 is_moving = false
 current_state = PLAYER_STATE.IDLE
@@ -104,6 +114,17 @@ function apply_slow_effect(duration, slow_ratio) {
     alarm[3] = game_speed * duration
     move_speed = move_speed * slow_ratio
     is_slowed = true
+}
+
+function useItem() {
+    switch(current_item) {
+        case PLAYER_ITEM.health_potion:
+            if (health_potion >= 1 && hp < max_hp) {
+                health_potion--
+                hp += hp == max_hp-1 ? 1 : 2
+            }
+            break;
+    }
 }
 
 
