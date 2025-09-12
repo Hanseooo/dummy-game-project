@@ -21,5 +21,5 @@
   "sampleRate":44100,
   "soundFile":"snd_sword_strikes_object.wav",
   "type":0,
-  "volume":0.25,
+  "volume":0.1,
 }

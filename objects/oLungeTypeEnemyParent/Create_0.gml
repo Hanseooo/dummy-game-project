@@ -51,6 +51,8 @@ dash_dir_y          = 0;
 dash_speed_initial     = dash_speed;  
 dash_friction_initial  = dash_friction;  
 
+can_drop_item = true
+
 /// — Default sprite scaling (child can override)  
 image_xscale = 0.8;  
 image_yscale = 0.8;

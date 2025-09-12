@@ -19,6 +19,8 @@ attack_cd = 45
 attack_timer = 0
 attack_knockback = 2
 
+can_drop_item = true
+
 tilemap = layer_tilemap_get_id("Tiles_Wall")
 
 enum ENEMY_STATE {

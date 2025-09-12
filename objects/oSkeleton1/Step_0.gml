@@ -144,7 +144,7 @@ if (hp <= 0 && current_state != ENEMY_STATE.dead) {
     current_state = ENEMY_STATE.dead;
     knockback_force += 0.2
     
-    scr_enemy_item_drop(move_x, move_y, OHealthPotion, 0, 10)
+    if (can_drop_item) scr_enemy_item_drop(x, y, OHealthPotion, 2, depth, 1, 1)
     
     scr_hit_sparks(x, y, 14, knockback_dir)
     sprite_index = spr_skeleton1_death;
@@ -211,8 +211,8 @@ if (knockback_force > 0) {
 }
 
 // Apply friction
-hspeed *= 0.85;
-vspeed *= 0.85;
+hspeed *= 0.9;
+vspeed *= 0.9;
 
 // Clamp velocity
 var max_speed = 2

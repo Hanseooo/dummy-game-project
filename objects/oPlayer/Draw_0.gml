@@ -14,3 +14,5 @@ if (hit_flash) {
 } else {
     draw_self();
 }
+
+//draw_sprite(spr_heal_effect, 0, x, y);

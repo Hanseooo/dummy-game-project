@@ -1,5 +1,10 @@
 /// oShadowBall Step
 
+/// // Accelerate until max speed is reached
+if (speed < max_speed) {
+    speed = min(speed + accel, max_speed);
+}
+
 // Move
 var dx = lengthdir_x(speed, direction);
 var dy = lengthdir_y(speed, direction);

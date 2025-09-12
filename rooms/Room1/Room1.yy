@@ -7,6 +7,7 @@
   "inheritLayers":false,
   "instanceCreationOrder":[
     {"name":"inst_7EEA0A54","path":"rooms/Room1/Room1.yy",},
+    {"name":"inst_721A520E","path":"rooms/Room1/Room1.yy",},
     {"name":"inst_161CF09A","path":"rooms/Room1/Room1.yy",},
     {"name":"inst_3A0DA107","path":"rooms/Room1/Room1.yy",},
     {"name":"inst_6879ADC5","path":"rooms/Room1/Room1.yy",},
@@ -54,6 +55,8 @@
     {"name":"inst_4C99387B","path":"rooms/Room1/Room1.yy",},
     {"name":"inst_2CE483FE","path":"rooms/Room1/Room1.yy",},
     {"name":"inst_4EC119F0","path":"rooms/Room1/Room1.yy",},
+    {"name":"inst_40B954C3","path":"rooms/Room1/Room1.yy",},
+    {"name":"inst_66E66C84","path":"rooms/Room1/Room1.yy",},
   ],
   "isDnd":false,
   "layers":[
@@ -106,6 +109,9 @@
         {"$GMRInstance":"v2","%Name":"inst_4C99387B","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_4C99387B","objectId":{"name":"oDarkMage","path":"objects/oDarkMage/oDarkMage.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":896.0,"y":672.0,},
         {"$GMRInstance":"v2","%Name":"inst_2CE483FE","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_2CE483FE","objectId":{"name":"oDarkMage","path":"objects/oDarkMage/oDarkMage.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":832.0,"y":320.0,},
         {"$GMRInstance":"v2","%Name":"inst_4EC119F0","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_4EC119F0","objectId":{"name":"oDarkMage","path":"objects/oDarkMage/oDarkMage.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":608.0,"y":544.0,},
+        {"$GMRInstance":"v2","%Name":"inst_40B954C3","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_40B954C3","objectId":{"name":"oCurrentItemGui","path":"objects/oCurrentItemGui/oCurrentItemGui.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":192.0,"y":128.0,},
+        {"$GMRInstance":"v2","%Name":"inst_66E66C84","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_66E66C84","objectId":{"name":"oGlobalController","path":"objects/oGlobalController/oGlobalController.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":192.0,"y":96.0,},
+        {"$GMRInstance":"v2","%Name":"inst_721A520E","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_721A520E","objectId":{"name":"oPlayerEffectsController","path":"objects/oPlayerEffectsController/oPlayerEffectsController.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":224.0,"y":96.0,},
       ],"layers":[],"name":"Instances","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":true,},
     {"$GMRTileLayer":"","%Name":"Tiles_Wall","depth":100,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"layers":[],"name":"Tiles_Wall","properties":[],"resourceType":"GMRTileLayer","resourceVersion":"2.0","tiles":{"SerialiseHeight":48,"SerialiseWidth":86,"TileCompressedData":[
           1,10,-32,28,1,9,-8,-2147483648,-40,2,-4,-2147483648,1,10,-32,-2147483648,1,9,-8,-2147483648,1,2,-38,

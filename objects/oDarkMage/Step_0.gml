@@ -82,38 +82,45 @@ switch (current_state) {
                 var rand = choose(0, 1)
                 
                 if (rand == 0) { 
-                    var side_offset = 8 * sign(image_xscale);
+                    var side_offset = 4 * sign(image_xscale);
                     var up_offset   = -6;
                     px += side_offset;
                     py += up_offset;
             
                     var ball = instance_create_depth(px, py, depth, oShadowBall);
                     ball.direction     = a;
-                    ball.speed         = 1.5;
+                    ball.max_speed         = random_range(1, 2);
                     ball.range         = 256;
                     ball.distance_trav = 0;
                     ball.tilemap       = tilemap;
                     ball.damage        = damage
                     ball.owner = id
-                    attack_cd = game_speed * random_range(4, 7) 
                   }
             
                 else {
-                    var rand2 = floor(random_range(0, 6))
-                    var entity = noone
-                    if (rand2 <= 2) entity = oGreenSlime
-                    else if (rand2 == 5) entity = oDarkMage
-                    else entity = oSkeleton1
-                        
-                    var mob = instance_create_depth(px, py, depth, entity)  
-                    mob.hp /= 2
-                    mob.image_blend = make_color_rgb(147, 112, 219)
-                    mob.damage = mob.damage >= 2 ? mob.damage / 2 : 1
-                    mob.image_alpha = 0.85
-                    audio_play_sound(snd_stand_summon, 0, false)
-                    attack_cd = game_speed * choose(6, 8)
+                    var rand2 = floor(random_range(0, 6));
+                    var entity = noone;
+                    if (rand2 <= 2) entity = oGreenSlime;
+                    else if (rand2 == 5) entity = oDarkMage;
+                    else entity = oSkeleton1;
+                
+                    // Tactical spawn: avoid walls, position based on player distance
+                    var safe_pos = scr_find_tactical_spawn(x, y, oPlayer, tilemap, 64, 25);
+                    var spawn_x = safe_pos[0];
+                    var spawn_y = safe_pos[1];
+                
+                    var mob = instance_create_depth(spawn_x, spawn_y, depth, entity);
+                    mob.hp /= 2;
+                    mob.image_blend = make_color_rgb(147, 112, 219);
+                    mob.damage = mob.damage >= 2 ? mob.damage / 2 : 1;
+                    mob.image_alpha = 0.85;
+                    mob.can_drop_item = false
+                
+                    audio_play_sound(snd_stand_summon, 0, false);
                 }
                 
+                attack_cd = game_speed * random_range(4, 7) 
+
             if (image_index >= image_number-1) {
                 image_speed = 0
                 image_index = image_number-1
@@ -132,7 +139,7 @@ if (hp <= 0 && current_state != ENEMY_STATE.dead) {
     current_state = ENEMY_STATE.dead;
     knockback_force += 0.25
     
-    scr_enemy_item_drop(move_x, move_y, OHealthPotion, 0, 5)
+    if (can_drop_item) scr_enemy_item_drop(x, y, OHealthPotion, 5, depth, 1, 2)
 
     scr_hit_sparks(x, y, 14, knockback_dir)
     sprite_index = spr_dark_mage_death;
@@ -205,8 +212,8 @@ if (knockback_force > 0) {
 }
 
 // Apply friction
-hspeed *= 0.85;
-vspeed *= 0.85;
+hspeed *= 0.9;
+vspeed *= 0.9;
 
 // Clamp velocity
 var max_speed = 2

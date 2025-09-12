@@ -4,7 +4,7 @@ if (!other.is_invincible) {
     other.player_take_damage(id);
 
     // Offset the residue slightly forward in the projectile's direction
-    var impact_offset = 64; // tweak for deeper or shallower placement
+    var impact_offset = 32; // tweak for deeper or shallower placement
     var impact_x = x + lengthdir_x(impact_offset, direction);
     var impact_y = y + lengthdir_y(impact_offset, direction);
 

@@ -4,43 +4,33 @@ var player_to_cursor_angle = point_direction(x, y, mouse_x, mouse_y)
 
 
 
-
-
+// reset combo if time’s up
+if (combo_timer > 0) combo_timer--;
+else combo_step = 0;
 
 //if (current_state != PLAYER_STATE.ATTACK && current_state !=PLAYER_STATE.ROLLING) {
     //if (is_moving) current_state = PLAYER_STATE.MOVING;
     //else current_state = PLAYER_STATE.IDLE;
 //}
 
+if (combo_step > 0) attack_timer = attack_cd
 
 if (attack_timer < attack_cd) attack_timer++
+    
+if (item_cooldown > 0) item_cooldown--;
 
-if (mouse_check_button_pressed(mb_left) && attack_timer >= attack_cd && current_state != PLAYER_STATE.ROLLING) {
-    current_state = PLAYER_STATE.ATTACK;
-    attack_timer = 0;
-    rand = irandom(2);
-
-    // Lock the attack sprite for this swing
-    if (player_to_cursor_angle < 45 || player_to_cursor_angle >= 315) {
-        attack_sprite = spr_player_attack_right;
-    } else if (player_to_cursor_angle < 135) {
-        attack_sprite = spr_player_attack_up;
-    } else if (player_to_cursor_angle < 225) {
-        attack_sprite = spr_player_attack_left;
+// First hit requires cooldown; chained hits use combo window
+if (mouse_check_button_pressed(mb_left) && current_state != PLAYER_STATE.ROLLING) {
+    if (current_state != PLAYER_STATE.ATTACK) {
+        if (attack_timer >= attack_cd) {
+            combo_step = 1;
+            start_combo_hit(combo_step);
+        }
     } else {
-        attack_sprite = (rand == 0) ? spr_player_attack_down2 : spr_player_attack_down;
+        if (combo_timer > 0 && combo_step < 3) {
+            combo_next_queued = true;
+        }
     }
-    sprite_index = attack_sprite;
-    image_index = 0;
-    image_speed = 1;
-
-    audio_sound_pitch(snd_sword_swoosh, random_range(0.8, 1.2));
-    audio_play_sound(snd_sword_swoosh, 0, false);
-
-    var _inst = instance_create_depth(x, y, depth, oPlayerAttack);
-    _inst.image_angle = player_to_cursor_angle;
-
-    _inst.owner = id;
 }
 
 if (keyboard_check(vk_space) && current_state != PLAYER_STATE.ATTACK && roll_timer >= roll_cd && stamina >= roll_stamina_consumption && current_state != PLAYER_STATE.ROLLING) {
@@ -69,7 +59,7 @@ if (current_state == PLAYER_STATE.ROLLING) {
     var mvx = roll_dir_x * roll_speed;
     var mvy = roll_dir_y * roll_speed;
     
-    set_invincibility_duration(30)
+    set_invincibility_duration(game_speed*0.4)
     
     if (player_to_cursor_angle < 45 || player_to_cursor_angle >= 315) {
         roll_sprite = spr_player_roll_right;
@@ -111,6 +101,52 @@ if (current_state == PLAYER_STATE.ROLLING) {
     exit;  
 }
 
+//dash (separate)
+if (current_state == PLAYER_STATE.ATTACK && combo_step >= 2 && !did_dash_for_hit) {
+    var tgt = find_dash_target(42);
+    if (tgt != noone) {
+        dash_toward(tgt, dash_distance, 8); // 8px buffer outside mask
+    }
+    did_dash_for_hit = true;
+}
+
+// Smooth dash movement
+// Smooth dash movement with collision + safe stop check
+if (dash_remaining > 0) {
+    if (instance_exists(dash_target)) {
+        var dist_to_target = point_distance(x, y, dash_target.x, dash_target.y);
+        if (dist_to_target <= dash_stop_dist) {
+            hspeed = 0;
+            vspeed = 0;
+            dash_remaining = 0;
+        }
+    }
+
+    if (dash_remaining > 0) {
+        var step_dist = point_distance(0, 0, hspeed, vspeed);
+
+        // Horizontal
+        if (!scr_tilemap_solid_at(x + hspeed, y, tilemap)) {
+            x += hspeed;
+        } else {
+            hspeed = 0;
+        }
+
+        // Vertical
+        if (!scr_tilemap_solid_at(x, y + vspeed, tilemap)) {
+            y += vspeed;
+        } else {
+            vspeed = 0;
+        }
+
+        dash_remaining -= step_dist;
+
+        if (dash_remaining <= 0) {
+            hspeed = 0;
+            vspeed = 0;
+        }
+    }
+}
 
 
 if (keyboard_check(ord("D"))) horizontal_movement++; 
@@ -149,6 +185,24 @@ if (current_state != PLAYER_STATE.ATTACK && current_state != PLAYER_STATE.ROLLIN
     else current_state = PLAYER_STATE.IDLE;
 }
 
+// ——— SEGMENT END ———
+if (current_state == PLAYER_STATE.ATTACK) {
+    if (floor(image_index) >= attack_end_frame) {
+        if (combo_next_queued && combo_step < 3) {
+            combo_step++;
+            combo_next_queued = false;
+            start_combo_hit(combo_step);
+        } else {
+            var moving = (horizontal_movement != 0 || vertical_movement != 0);
+            current_state = moving ? PLAYER_STATE.MOVING : PLAYER_STATE.IDLE;
+        }
+    }
+}
+
+if (keyboard_check(ord("Z"))) {
+    useItem()
+}
+
 
 
 if (hp < max_hp && hp_timer >= hp_delay) {
@@ -165,6 +219,7 @@ if (roll_timer <= roll_cd) roll_timer++
 if (stamina <= max_stamina) {
     stamina += stamina_regen
 }
+
 
 
 
@@ -212,9 +267,9 @@ if (pulse_timer > 0) {
 
 is_moving = (horizontal_movement != 0 || vertical_movement != 0);
 
-if (current_state != PLAYER_STATE.ATTACK && current_state != PLAYER_STATE.ROLLING) {
-    current_state = is_moving ? PLAYER_STATE.MOVING : PLAYER_STATE.IDLE;
-}
+//if (current_state != PLAYER_STATE.ATTACK && current_state != PLAYER_STATE.ROLLING) {
+    //current_state = is_moving ? PLAYER_STATE.MOVING : PLAYER_STATE.IDLE;
+//}
 
 
 //if (!is_moving) {
@@ -230,24 +285,40 @@ if (current_state != PLAYER_STATE.ATTACK && current_state != PLAYER_STATE.ROLLIN
 
 switch (current_state) {
     case PLAYER_STATE.IDLE:
-        if (player_to_cursor_angle < 45 || player_to_cursor_angle >= 315)      sprite_index = spr_player_idle_right;
-        else if (player_to_cursor_angle < 135)                                  sprite_index = spr_player_idle_up;
-        else if (player_to_cursor_angle < 225)                                  sprite_index = spr_player_idle_left;
-        else                                                                     sprite_index = spr_player_idle_down;
-        break;
-
-    case PLAYER_STATE.MOVING:
-        // Now horizontal_movement/vertical_movement are up to date
-        if      (horizontal_movement > 0) sprite_index = spr_player_walk_right;
-        else if (horizontal_movement < 0) sprite_index = spr_player_walk_left;
-        else if (vertical_movement   > 0) sprite_index = spr_player_walk_down;
-        else if (vertical_movement   < 0) sprite_index = spr_player_walk_up;
+        if (player_to_cursor_angle < 45 || player_to_cursor_angle >= 315) {
+            sprite_index = spr_player_idle_right;
+            image_xscale = 1;
+        }
+        else if (player_to_cursor_angle < 135) {
+            sprite_index = spr_player_idle_up;
+            image_xscale = 1;
+        }
+        else if (player_to_cursor_angle < 225) {
+            sprite_index = spr_player_idle_right; // use right sprite
+            image_xscale = -1; // flip for left
+        }
         else {
-            // Safety: if MOVING but zero (edge case), fallback to idle facing
-            if (player_to_cursor_angle < 45 || player_to_cursor_angle >= 315)  sprite_index = spr_player_idle_right;
-            else if (player_to_cursor_angle < 135)                              sprite_index = spr_player_idle_up;
-            else if (player_to_cursor_angle < 225)                              sprite_index = spr_player_idle_left;
-            else                                                                 sprite_index = spr_player_idle_down;
+            sprite_index = spr_player_idle_down;
+            image_xscale = 1;
+        }
+        break;
+    
+    case PLAYER_STATE.MOVING:
+        if (horizontal_movement > 0) {
+            sprite_index = spr_player_walk_right;
+            image_xscale = 1;
+        }
+        else if (horizontal_movement < 0) {
+            sprite_index = spr_player_walk_right; // use right sprite
+            image_xscale = -1; // flip for left
+        }
+        else if (vertical_movement > 0) {
+            sprite_index = spr_player_walk_down;
+            image_xscale = 1;
+        }
+        else if (vertical_movement < 0) {
+            sprite_index = spr_player_walk_up;
+            image_xscale = 1;
         }
         break;
 
@@ -264,3 +335,11 @@ switch (current_state) {
     
 
 }
+//
+//if (current_state == PLAYER_STATE.ATTACK) {
+    //// Once we at least hit the last frame, go back to move/idle
+    //if (image_index > attack_end_frame + 1) {
+        //var moving = (horizontal_movement != 0 || vertical_movement != 0);
+        //current_state = moving ? PLAYER_STATE.MOVING : PLAYER_STATE.IDLE;
+    //}
+//}

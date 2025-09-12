@@ -1,4 +1,4 @@
-hp = 4
+hp = 3
 damage = 2
 
 hit_registered = false
@@ -41,6 +41,8 @@ attack_cd = 60
 attack_timer = 0
 attack_knockback = 2
 
+can_drop_item = true
+
 image_xscale = 0.75
 image_yscale = 0.75
 
@@ -65,7 +67,7 @@ function set_directional_sprite() {
 
 function apply_hit_effect(duration, alarm_index) {
     alarm[alarm_index] = duration;
-    audio_sound_pitch(snd_sword_strikes_object,random_range(0.8, 1.2))
+    audio_sound_pitch(snd_sword_strikes_object,irandom_range(1.2, 1.5))
     audio_play_sound(snd_sword_strikes_object, 0, false)
     //image_blend = flash_color;
 }

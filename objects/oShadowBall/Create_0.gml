@@ -1,6 +1,8 @@
 /// oShadowBall Create
 // (If you didn’t set them on spawn, you can default here)
-if (!variable_instance_exists(id, "speed"))      speed = 6;
+    speed = 0.5;
+    max_speed = random_range(1, 2)
+    accel = 0.05
 if (!variable_instance_exists(id, "range"))      range = 256;
 if (!variable_instance_exists(id, "damage"))      damage = 2;
 
